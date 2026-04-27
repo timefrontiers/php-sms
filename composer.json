@@ -1,0 +1,37 @@
+{
+  "name": "timefrontiers/php-sms",
+  "description": "Multi-driver SMS messaging for PHP 8.4+. Handles outbound sends, delivery webhooks, message logging, and driver‑based routing with automatic continent selection.",
+  "type": "library",
+  "keywords": [
+    "sms",
+    "timefrontiers",
+    "twilio",
+    "africastalking",
+    "phone"
+  ],
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Ikechukwu Okalia",
+      "role": "developer"
+    }
+  ],
+  "require": {
+    "php": "^8.4",
+    "timefrontiers/php-core": "^1.0",
+    "timefrontiers/php-data": "^1.0",
+    "timefrontiers/php-sql-database": "^1.0",
+    "timefrontiers/php-database-object": "^1.0",
+    "timefrontiers/php-pagination": "^1.0",
+    "timefrontiers/php-instance-error": "^1.0",
+    "timefrontiers/php-validator": "^1.0",
+    "twilio/sdk": "^8.0",
+    "africastalking/africastalking": "^3.0"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "TimeFrontiers\\Sms\\": "src/"
+    }
+  }
+}
