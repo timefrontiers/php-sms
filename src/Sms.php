@@ -9,7 +9,7 @@ use TimeFrontiers\Helper\Pagination;
 use TimeFrontiers\Helper\HasErrors;
 use TimeFrontiers\SQLDatabase;
 use TimeFrontiers\Data\Random;
-use TimeFrontiers\Validator\Validator;
+use TimeFrontiers\Validation\Validator;
 use TimeFrontiers\Phone;
 use TimeFrontiers\Sms\Driver\SmsDriverInterface;
 use TimeFrontiers\Sms\Driver\AfricasTalkingDriver;
