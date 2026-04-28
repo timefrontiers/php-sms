@@ -151,6 +151,12 @@ class Sms
    */
   private static ?array $config = null;
 
+  /**
+   * Errors from the last send() call — survives even when send() returns false.
+   * Retrieve via Sms::lastErrors() after a failed send.
+   */
+  private static array $_last_errors = [];
+
   // ---------------------------------------------------------------------------
   // Bootstrap (static — call once in app boot)
   // ---------------------------------------------------------------------------
@@ -187,6 +193,22 @@ class Sms
     }
   }
 
+  /**
+   * Return errors from the most recent send() call.
+   *
+   * Use this when send() returns false and you have no object to inspect:
+   *   $result = Sms::send([...]);
+   *   if (!$result) {
+   *       $errors = Sms::lastErrors(); // ['send' => [[...]], ...]
+   *   }
+   *
+   * @return array<string, array>
+   */
+  public static function lastErrors(): array
+  {
+    return self::$_last_errors;
+  }
+
   // ---------------------------------------------------------------------------
   // Send
   // ---------------------------------------------------------------------------
@@ -215,7 +237,7 @@ class Sms
     // Populate fields
     $sms->receiver   = $data['receiver'] ?? null;
     $sms->message    = $data['message']  ?? null;
-    $sms->sender     = $data['sender']   ?? (self::$config['default_sender'] ?? null);
+    $sms->sender     = $data['sender']   ?? '';   // explicit per-message sender only; drivers apply their own sender_id first
     $sms->user       = $data['user']     ?? 'SYSTEM';
     $sms->batch      = $data['batch']    ?? null;
     $sms->message_id = $data['message_id'] ?? null;
@@ -223,6 +245,7 @@ class Sms
     $sms->status     = self::STATUS_PENDING;
 
     // Validate
+    self::$_last_errors = [];
     $validator = Validator::make([
       'receiver' => $sms->receiver,
       'message'  => $sms->message,
@@ -233,6 +256,7 @@ class Sms
 
     if ($validator->fails()) {
       $sms->_mergeErrors($validator, 'validation', 'validation');
+      self::$_last_errors = $sms->getErrors();
       return false;
     }
 
@@ -240,6 +264,7 @@ class Sms
     $driverName = $driver ?? $data['driver'] ?? self::resolveDriverFromConfig($sms->receiver);
     if (!$driverName) {
       $sms->_userError('send', 'No SMS driver configured or resolved.');
+      self::$_last_errors = $sms->getErrors();
       return false;
     }
 
@@ -247,6 +272,7 @@ class Sms
       $driver = self::getDriver($driverName);
     } catch (\RuntimeException $e) {
       $sms->_systemError('send', $e->getMessage());
+      self::$_last_errors = $sms->getErrors();
       return false;
     }
 
@@ -255,6 +281,7 @@ class Sms
 
     // Save pending record (generates code)
     if (!$sms->save()) {
+      self::$_last_errors = $sms->getErrors();
       return false;
     }
 
@@ -265,7 +292,8 @@ class Sms
       $sms->status = self::STATUS_FAILED;
       $sms->meta   = json_encode(['error' => $e->getMessage()]);
       $sms->save();
-      $sms->_userError('send', 'SMS delivery failed: ' . $e->getMessage());
+      $sms->_systemError('send', 'SMS delivery failed: ' . $e->getMessage());
+      self::$_last_errors = $sms->getErrors();
       return false;
     }
 

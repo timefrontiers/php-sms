@@ -40,7 +40,10 @@ class AfricasTalkingDriver implements SmsDriverInterface
     $at      = new AfricasTalking($appId, $apiKey);
     $service = $at->sms();
 
-    $from = $sms->sender() ?: ($this->config['sender_id'] ?? null);
+    // Priority: driver sender_id → per-message sender → global default_sender
+    $from = $this->config['sender_id']
+        ?? ($sms->sender() !== '' ? $sms->sender() : null)
+        ?? null;
 
     $result = $service->send([
       'to'      => $sms->receiver(),
@@ -57,11 +60,20 @@ class AfricasTalkingDriver implements SmsDriverInterface
       );
     }
 
-    $recipients = $result['data']['SMSMessageData']['Recipients'] ?? [];
-    $first      = $recipients[0] ?? null;
+    // SDK versions differ in nesting — normalise to SMSMessageData array
+    $smsData    = $result['data']['SMSMessageData'] ?? $result['SMSMessageData'] ?? [];
+    $atMessage  = $smsData['Message'] ?? null;  // AT puts error reason here
+    $recipients = $smsData['Recipients']
+               ?? $result['data']['Recipients']
+               ?? $result['Recipients']
+               ?? [];
+
+    $first = $recipients[0] ?? null;
 
     if (!$first) {
-      throw new \RuntimeException('No recipient data returned.');
+      throw new \RuntimeException(
+        'AfricasTalking delivery failed: ' . ($atMessage ?? ('Raw: ' . json_encode($result)))
+      );
     }
 
     // Cost is returned as "CURRENCY AMOUNT" (e.g. "KES 0.50")
