@@ -40,11 +40,11 @@ class AfricasTalkingDriver implements SmsDriverInterface
     $at      = new AfricasTalking($appId, $apiKey);
     $service = $at->sms();
 
-    $from = $sms->sender ?: ($this->config['sender_id'] ?? null);
+    $from = $sms->sender() ?: ($this->config['sender_id'] ?? null);
 
     $result = $service->send([
-      'to'      => $sms->receiver,
-      'message' => $sms->message,
+      'to'      => $sms->receiver(),
+      'message' => $sms->message(),
       'from'    => $from,
     ]);
 

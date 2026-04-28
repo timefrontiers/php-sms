@@ -42,16 +42,16 @@ class TwilioDriver implements SmsDriverInterface
     $client = new Client($sid, $token);
 
     // Resolve sender: prefer the per‑message sender, then configured sender_id, then sender_phone
-    $from = $sms->sender ?: ($this->config['sender_id'] ?? $this->config['sender_phone'] ?? null);
+    $from = $sms->sender() ?: ($this->config['sender_id'] ?? $this->config['sender_phone'] ?? null);
     if (!$from) {
       throw new \RuntimeException('Twilio sender not configured or provided.');
     }
 
     $message = $client->messages->create(
-      $sms->receiver,
+      $sms->receiver(),
       [
         'from' => $from,
-        'body' => $sms->message,
+        'body' => $sms->message(),
       ]
     );
 

@@ -208,7 +208,7 @@ class Sms
    * } $data
    * @return static|false
    */
-  public static function send(array $data): static|false
+  public static function send(array $data, ?string $driver = null): static|false
   {
     $sms = new static();
 
@@ -236,8 +236,8 @@ class Sms
       return false;
     }
 
-    // Determine driver
-    $driverName = $data['driver'] ?? self::resolveDriverFromConfig($sms->receiver);
+    // Determine driver — explicit param > $data['driver'] > config resolution
+    $driverName = $driver ?? $data['driver'] ?? self::resolveDriverFromConfig($sms->receiver);
     if (!$driverName) {
       $sms->_userError('send', 'No SMS driver configured or resolved.');
       return false;
@@ -283,9 +283,9 @@ class Sms
   /**
    * Alias for send() — provides semantic parity for “send and wait” flows.
    */
-  public static function sendAndWait(array $data): static|false
+  public static function sendAndWait(array $data, ?string $driver = null): static|false
   {
-    return self::send($data);
+    return self::send($data, $driver);
   }
 
   // ---------------------------------------------------------------------------
