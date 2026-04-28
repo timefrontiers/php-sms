@@ -76,9 +76,11 @@ use TimeFrontiers\Sms\Driver\TwilioDriver;
  */
 class Sms
 {
-  use DatabaseObject,
-      Pagination,
-      HasErrors;
+  use HasErrors;
+  use Pagination;
+  use DatabaseObject {
+    DatabaseObject::_create as _traitCreate;
+  }
 
   // ---------------------------------------------------------------------------
   // DatabaseObject config
@@ -387,7 +389,7 @@ class Sms
       $this->code = self::generateUniqueCode($this->conn());
     }
 
-    return parent::_create();
+    return $this->_traitCreate();
   }
 
   // ---------------------------------------------------------------------------
