@@ -377,6 +377,10 @@ class Sms
    */
   public static function findByCode(string $code): ?static
   {
+    if (!\preg_match('/^828[0-9]{8,12}$/', $code)) {
+      return null;
+    }
+
     return static::query()->where('code', $code)->first() ?: null;
   }
 

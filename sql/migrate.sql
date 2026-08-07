@@ -6,7 +6,7 @@ START TRANSACTION;
 
 -- 1. Add new columns (nullable first, so no DEFAULT conflict with existing data)
 ALTER TABLE `sms`
-  ADD COLUMN `code`       CHAR(15)         NULL AFTER `id`,
+  ADD COLUMN `code`       VARCHAR(15) CHARACTER SET ascii COLLATE ascii_bin NULL AFTER `id`,
   ADD COLUMN `message_id` BIGINT UNSIGNED  NULL DEFAULT NULL AFTER `status`,
   ADD COLUMN `direction`  ENUM('outbound','inbound') NOT NULL DEFAULT 'outbound' AFTER `message_id`,
   ADD COLUMN `meta`       JSON             NULL DEFAULT NULL AFTER `reference`,

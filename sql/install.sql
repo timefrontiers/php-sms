@@ -4,7 +4,7 @@
 
 CREATE TABLE `sms` (
   `id`              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `code`            CHAR(15)        NOT NULL,
+  `code`            VARCHAR(15) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `status`          ENUM('pending','queued','sent','failed','delivered') NOT NULL DEFAULT 'pending',
   `message_id`      BIGINT UNSIGNED NULL DEFAULT NULL,
   `direction`       ENUM('outbound','inbound') NOT NULL DEFAULT 'outbound',
@@ -25,5 +25,6 @@ CREATE TABLE `sms` (
   INDEX `idx_sms_user` (`user`),
   INDEX `idx_sms_batch` (`batch`),
   INDEX `idx_sms_reference` (`reference`),
-  INDEX `idx_sms_message_id` (`message_id`)
+  INDEX `idx_sms_message_id` (`message_id`),
+  CONSTRAINT `chk_sms_public_code` CHECK (`code` REGEXP '^828[0-9]{8,12}$')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
