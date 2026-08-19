@@ -1,0 +1,11 @@
+<?php
+
+namespace TimeFrontiers;
+
+/**
+ * @method \mysqli_result|\PDOStatement|bool execute(string $sql, list<mixed> $params = [])
+ * @method array<string, mixed>|false fetchOne(string $sql, list<mixed> $params = [])
+ * @method list<array<string, mixed>>|false fetchAll(string $sql, list<mixed> $params = [])
+ * @method int|string insertId()
+ */
+class SQLDatabase {}

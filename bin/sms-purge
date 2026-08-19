@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use TimeFrontiers\Sms\Sms;
+
+if (PHP_SAPI !== 'cli') {
+  fwrite(STDERR, "This command is available only through the CLI.\n");
+  exit(2);
+}
+
+$options = getopt('', ['bootstrap:', 'apply', 'limit::']);
+$bootstrap = $options['bootstrap'] ?? null;
+if (!is_string($bootstrap) || $bootstrap === '' || !is_file($bootstrap)) {
+  fwrite(STDERR, "Usage: bin/sms-purge --bootstrap=/absolute/app/bootstrap.php [--apply] [--limit=500]\n");
+  exit(2);
+}
+
+require $bootstrap;
+$limit = isset($options['limit']) ? filter_var($options['limit'], FILTER_VALIDATE_INT) : 500;
+if (!is_int($limit)) {
+  fwrite(STDERR, "--limit must be an integer.\n");
+  exit(2);
+}
+
+$report = Sms::service()->purgeExpiredContent(!isset($options['apply']), $limit);
+fwrite(STDOUT, json_encode([
+  'dry_run' => $report->dryRun,
+  'items' => $report->items,
+  'errors' => $report->errors,
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+
+exit($report->succeeded() ? 0 : 1);

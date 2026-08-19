@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TimeFrontiers\Sms;
+
+final class ErrorCode
+{
+  public const VALIDATION_FAILED = 'SMS_VALIDATION_FAILED';
+  public const CONFIGURATION_INVALID = 'SMS_CONFIGURATION_INVALID';
+  public const PERSISTENCE_FAILED = 'SMS_PERSISTENCE_FAILED';
+  public const IDEMPOTENCY_CONFLICT = 'SMS_IDEMPOTENCY_CONFLICT';
+  public const PROVIDER_REJECTED = 'SMS_PROVIDER_REJECTED';
+  public const OUTCOME_UNKNOWN = 'SMS_OUTCOME_UNKNOWN';
+  public const WEBHOOK_UNAUTHENTICATED = 'SMS_WEBHOOK_UNAUTHENTICATED';
+  public const WEBHOOK_INVALID = 'SMS_WEBHOOK_INVALID';
+  public const WEBHOOK_PERSISTENCE_FAILED = 'SMS_WEBHOOK_PERSISTENCE_FAILED';
+  public const CORRUPT_METADATA = 'SMS_CORRUPT_METADATA';
+  public const METADATA_LIMIT = 'SMS_METADATA_LIMIT';
+
+  private function __construct()
+  {
+  }
+}

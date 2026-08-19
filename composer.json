@@ -1,6 +1,6 @@
 {
   "name": "timefrontiers/php-sms",
-  "description": "Multi-driver SMS messaging for PHP 8.4+. Handles outbound sends, delivery webhooks, message logging, and driver‑based routing with automatic continent selection.",
+  "description": "Multi-driver SMS messaging for PHP 8.5+. Handles outbound sends, delivery webhooks, message logging, and driver‑based routing with automatic continent selection.",
   "type": "library",
   "keywords": [
     "sms",
@@ -9,7 +9,7 @@
     "africastalking",
     "phone"
   ],
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "Ikechukwu Okalia",
@@ -17,21 +17,46 @@
     }
   ],
   "require": {
-    "php": "^8.4",
+    "africastalking/africastalking": "^3.0",
+    "ext-mbstring": "*",
+    "php": "^8.5",
     "timefrontiers/php-core": "^1.0",
-    "timefrontiers/php-data": "^1.0",
-    "timefrontiers/php-sql-database": "^1.1",
-    "timefrontiers/php-database-object": "^1.0",
+    "timefrontiers/php-database-object": "^1.1",
+    "timefrontiers/php-has-errors": "^1.0",
     "timefrontiers/php-pagination": "^1.0",
-    "timefrontiers/php-instance-error": "^1.0",
-    "timefrontiers/php-validator": "^1.0",
-    "twilio/sdk": "^8.0",
-    "africastalking/africastalking": "^3.0"
+    "timefrontiers/php-sql-database": "^1.1.1",
+    "timefrontiers/php-validator": "^1.1",
+    "twilio/sdk": "^8.0"
   },
-  "require-dev": {},
+  "require-dev": {
+    "php-parallel-lint/php-parallel-lint": "^1.4",
+    "phpstan/phpstan": "^2.2",
+    "phpunit/phpunit": "^10.5"
+  },
+  "suggest": {
+    "timefrontiers/php-instance-error": "For rank-filtered extraction of errors from Sms compatibility results"
+  },
   "autoload": {
     "psr-4": {
       "TimeFrontiers\\Sms\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TimeFrontiers\\Sms\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "analyse": "@php vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=1G",
+    "check": [
+      "@lint",
+      "@test",
+      "@analyse"
+    ],
+    "lint": "@php vendor/bin/parallel-lint src tests bin",
+    "test": "@php vendor/bin/phpunit --configuration=phpunit.xml.dist"
   }
 }

@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+        - bin
+    tmpDir: .phpstan-cache
+    stubFiles:
+        - phpstan-stubs/SQLDatabase.stub
+    reportUnmatchedIgnoredErrors: true
